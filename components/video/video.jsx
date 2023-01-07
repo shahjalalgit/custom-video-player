@@ -36,6 +36,7 @@ const Video = ({ src, ...props }) => {
 		setVideoDetails({ ...videoDetails, totalPlayPauseButtonClick: 1 + videoDetails.totalPlayPauseButtonClick, historyOfPlayPauseButtonPress: [...videoDetails.historyOfPlayPauseButtonPress, { count: 1 + videoDetails.totalPlayPauseButtonClick, time: videoDetails?.currentTime, press: isVideoPlay ? "pasue" : " play" }] });
 	}
 	const _onTimeUpdate = () => {
+		setIsLoading(false)
 		console.log(videoRef.current?.currentTime)
 		setVideoDetails({ ...videoDetails, currentTime: videoRef.current?.currentTime });
 		setTotalTime(videoRef.current?.currentTime)
