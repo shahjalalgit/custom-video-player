@@ -1,12 +1,15 @@
 import React, { useRef, useState } from "react";
-import { BsFillPlayFill, BsPauseCircle, BsPlayCircle, BsVolumeMute, BsVolumeUp } from "react-icons/bs";
+import { BsFillPlayFill, BsFullscreenExit, BsPauseCircle, BsPlayCircle, BsVolumeMute, BsVolumeUp } from "react-icons/bs";
+import { TbPictureInPicture } from "react-icons/tb";
 const Video = ({ src, ...props }) => {
 	const videoRef = useRef();
+	const containerRef = useRef();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isVideoPlay, setIsVideoPlay] = useState(true);
 	const [isVideoEnd, setIsVideoEnd] = useState(false);
+	const [isFullScreen, setIsFullScreen] = useState(false);
 	const [totalTime, setTotalTime] = useState(0);
-	const [volume, setVolume] = useState(0)
+	const [volume, setVolume] = useState(0);
 	const [videoDetails, setVideoDetails] = useState({
 		isMuted: true,
 		videoLength: 0,
@@ -62,11 +65,38 @@ const Video = ({ src, ...props }) => {
 		  setVideoDetails({ ...videoDetails, isMuted: false });
 		} 
 	}
+	const _handlePicInPic = () => {
+		setFullScreen(old => !old)
+		videoRef.current.requestPictureInPicture();
+	}
+	const _handleFullScreen = () => {
+		console.log(containerRef.current);
+		if (containerRef.current.fullscreenElement){
+			return document.exitFullscreen
+		} else {
+			containerRef.current.requestFullscreen()
+		}
+	}
+	const _handleVideoTimeline = (e) => {
+		// console.log(e.nativeEvent.offsetX)
+		let videoTimelineWidth = videoRef.current.clientWidth; // getting video timeline width
+		let currentTime = ((e.nativeEvent.offsetX) / videoTimelineWidth) * videoRef.current.duration;
+		videoRef.current.currentTime = currentTime;
+		let time = Math.ceil((videoRef.current.currentTime / videoRef.current.duration) * 100);
+		console.log(time, currentTime)
+	}
+	const fastForward = () => {
+		videoRef.current.currentTime += 5;
+	};
+
+	const revert = () => {
+		videoRef.current.currentTime -= 5;
+	};
 	// console.log(videoRef.current?.muted)
 
 	return (
 		<>
-			<div className="relative group">
+			<div className="relative group w-[100%]" ref={containerRef}>
 				<video autoPlay={true} muted={videoDetails?.isMuted} ref={videoRef} {...props} className="w-full max-w-[1200px] mx-auto my-8" onPlay={_handlePlayVideo} onWaiting={() => setIsLoading(true)} onPlaying={() => setIsLoading(false)} onTimeUpdate={_onTimeUpdate} onEnded={_handleEnded}>
 					<source src={src} type='video/mp4'></source>
 				</video>
@@ -78,9 +108,12 @@ const Video = ({ src, ...props }) => {
 							// video player functionalities
 							<>
 								{/* progress bar */}
-								<div className="h-[8px] w-full bg-gray-500 rounded-2xl mb-10 cursor-pointer">
+								<div className="relative h-[8px] w-full bg-gray-500 rounded-2xl mb-10 cursor-pointer" onClick={_handleVideoTimeline}>
 									{/* progress bar inner */}
-									<div className={`relative h-full bg-red-600 `} style={{ width: `${(videoDetails?.currentTime / videoDetails?.videoLength) * 100}%`, transition: "all 0.3s" }}>
+									<div className={`relative h-full bg-red-600`} style={{
+										width: `${Math.ceil((videoRef.current.currentTime / videoRef.current.duration) * 100)}%`, 
+									transition: "all 0.3s"
+									 }} >
 										<div className="absolute -right-2 -top-[70%] rounded-full h-[20px] w-[20px] bg-white flex justify-end"></div>
 									</div>
 								</div>
@@ -88,15 +121,24 @@ const Video = ({ src, ...props }) => {
 								<div className="absolute right-2 bottom-[70px]  text-white bg-red-600 w-24 rounded-xl p-2">watermark</div>
 
 								{/* video control */}
-								<div className="absolute bottom-2 text-white flex items-center gap-3">
-									{/* play/pause control */}
-									<button onClick={_playPauseVideo}>{isVideoPlay ? <BsPauseCircle className="h-6 w-6" /> : <BsFillPlayFill className="h-6 w-6" />}</button>
+								<div className="absolute bottom-2 text-white flex items-center justify-between w-full pr-8">
+									<div className="flex items-center gap-3">
+										{/* play/pause control */}
+										<button onClick={_playPauseVideo}>{isVideoPlay ? <BsPauseCircle className="h-6 w-6" /> : <BsFillPlayFill className="h-6 w-6" />}</button>
+
+										{/* mute/unmute control */}
+										<button onClick={_handleMuteUnmute}>{videoRef.current?.muted ? <BsVolumeMute className="h-6 w-6" /> : <BsVolumeUp className="h-6 w-6" />}</button>
+										{/* volume range  */}
+										<input value={volume} onChange={_handleVolumeControl} className="w-[20%] h-1 rounded-full" type="range" step="any" min="0" max="1" />
+										{/* video timing */}
+										<div>
+											{formateTime(videoDetails?.currentTime) ?? "00:00"} / {formateTime(videoDetails?.videoLength) ?? "00:00"}
+										</div>
+									</div>
+									<div className="flex items-center gap-3">
+										<button onClick={_handlePicInPic}><TbPictureInPicture className="h-6 w-6" /></button>
+										<button onClick={_handleFullScreen}><BsFullscreenExit className="h-6 w-6" /></button>
 									
-									{/* mute/unmute control */}
-									<button onClick={_handleMuteUnmute}>{videoRef.current?.muted ? <BsVolumeMute className="h-6 w-6" /> : <BsVolumeUp className="h-6 w-6" />}</button>
-									<input value={volume} onChange={_handleVolumeControl} className="w-[20%] h-1 rounded-full" type="range" step="any" min="0" max="1" />
-									<div>
-										{formateTime(videoDetails?.currentTime) ?? "00:00"} / {formateTime(videoDetails?.videoLength) ?? "00:00"}
 									</div>
 								</div>
 								{/* middle play/pause button */}
@@ -146,11 +188,13 @@ const formateTime = (time) => {
 		}
 	}
 	const one_sec = 60;
-	const minutes = Math.floor(time / one_sec)
-	const seconds = Math.floor(time - minutes * one_sec);
-	// const hours = Math.floor(time / minutes) + one_sec;
-	return `${tenPad(minutes)}:${tenPad(seconds)}`
+	const seconds = Math.floor(time % 60);
+	const minutes = Math.floor(time / 60) % 60;
+	const hours = Math.floor(time / 3600);
+	if(hours == 0){
+		return `${tenPad(minutes)}:${tenPad(seconds)}`;
+	}
+	return `${tenPad(hours)}:${tenPad(minutes)}:${tenPad(seconds)}`;
 }
 
 export { Video };
-

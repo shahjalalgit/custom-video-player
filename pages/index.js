@@ -39,9 +39,11 @@ export default function Home() {
                 <link rel='icon' href='/favicon.ico' />
             </Head>
             <main className={styles.main}>
+                {/* src: 'foo.webm', type: 'video/webm' */}
                 {/* <div > <h1 className="text-3xl font-bold bg-red-400"> Hello world! </h1> </div> <video controls autoPlay loop onClick={(e) => handleClick(e)} > <source src={videoLink} /> </video> <video src="https://res.cloudinary.com/dssvrf9oz/video/upload/v1635662987/pexels-pavel-danilyuk-5359634_1_gmixla.mp4"> </video> */}
                 <div>
-                    <Video src='https://res.cloudinary.com/aremusmog/video/upload/v1668090866/WeTube/TRAILER_qurlei.mp4' />
+                    {/* <Video src='https://res.cloudinary.com/aremusmog/video/upload/v1668090866/WeTube/TRAILER_qurlei.mp4' /> */}
+                    <Video src={'https://media.w3.org/2010/05/sintel/trailer_hd.mp4'} />
                 </div>
             </main>
         </>
