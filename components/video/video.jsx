@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { BsFillPlayFill, BsPlayCircle, BsPauseCircle, BsVolumeMute, BsVolumeUp } from "react-icons/bs";
+import { BsFillPlayFill, BsPauseCircle, BsPlayCircle, BsVolumeMute, BsVolumeUp } from "react-icons/bs";
 const Video = ({ src, ...props }) => {
 	const videoRef = useRef();
 	const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +106,7 @@ const Video = ({ src, ...props }) => {
 								<div key={index}>
 									{`{
 										count: ${data?.count} ,
-										time: ${(data?.time) ?? "00:00"} ,
+										time: ${formateTime(data?.time) ?? "00:00"} ,
 										button_press: ${data?.press}
 									}`}
 								</div>
