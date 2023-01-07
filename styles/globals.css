@@ -101,7 +101,7 @@ a {
         color-scheme: dark;
     }
 }
-.progress-bar-inner {
+.progressBarInner {
     animation: animate-bar linear forwards;
     /* animation-play-state: paused; */
 }
