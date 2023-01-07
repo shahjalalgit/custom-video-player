@@ -6,6 +6,7 @@ const Video = ({ src, ...props }) => {
 	const [isVideoPlay, setIsVideoPlay] = useState(true);
 	const [isVideoEnd, setIsVideoEnd] = useState(false);
 	const [totalTime, setTotalTime] = useState(0);
+	const [volume, setVolume] = useState(0)
 	const [videoDetails, setVideoDetails] = useState({
 		isMuted: true,
 		videoLength: 0,
@@ -14,12 +15,6 @@ const Video = ({ src, ...props }) => {
 		totalPlayPauseButtonClick: 0,
 		historyOfPlayPauseButtonPress: []
 	});
-	const _handleMuteUnmute = (e) => {
-		e.target.defaultMuted = videoDetails?.isMuted;
-		e.target.muted = videoDetails?.isMuted;
-
-		setVideoDetails({ ...videoDetails, isMuted: !videoDetails?.isMuted });
-	}
 	const _handlePlayVideo = () => {
 		setIsVideoEnd(false);
 		setIsLoading(false);
@@ -37,7 +32,7 @@ const Video = ({ src, ...props }) => {
 	}
 	const _onTimeUpdate = () => {
 		setIsLoading(false)
-		console.log(videoRef.current?.currentTime)
+		// console.log(videoRef.current?.currentTime)
 		setVideoDetails({ ...videoDetails, currentTime: videoRef.current?.currentTime });
 		setTotalTime(videoRef.current?.currentTime)
 	}
@@ -47,6 +42,27 @@ const Video = ({ src, ...props }) => {
 		setIsVideoPlay(false);
 		setVideoDetails({ ...videoDetails, currentTime: 0, totalWatchTime: videoDetails?.totalWatchTime + totalTime });
 	}
+
+	const _handleMuteUnmute = (e) => {
+		setVideoDetails({ ...videoDetails, isMuted: !videoDetails?.isMuted });
+		videoRef.current.defaultMuted = !videoDetails?.isMuted;
+		videoRef.current.muted = !videoDetails?.isMuted;
+		if (!videoDetails?.isMuted){
+			setVolume(0)
+		} else {
+			setVolume(videoRef.current.volume)
+		}
+	}
+	const _handleVolumeControl = (e) => {
+		videoRef.current.volume = e.target.value
+		setVolume(e.target.value)
+		if (e.target.value == 0){
+		  setVideoDetails({ ...videoDetails, isMuted: true });
+		}else{
+		  setVideoDetails({ ...videoDetails, isMuted: false });
+		} 
+	}
+	// console.log(videoRef.current?.muted)
 
 	return (
 		<>
@@ -64,10 +80,7 @@ const Video = ({ src, ...props }) => {
 								{/* progress bar */}
 								<div className="h-[8px] w-full bg-gray-500 rounded-2xl mb-10 cursor-pointer">
 									{/* progress bar inner */}
-									<div className={`relative h-full bg-red-600 w-[0%] ${isVideoEnd ? "" : "progressBarInner"}`} style={{
-										animationPlayState: isVideoPlay ? "running" : "paused",
-										animationDuration: `${videoRef.current?.duration}s`
-									}}>
+									<div className={`relative h-full bg-red-600 `} style={{ width: `${(videoDetails?.currentTime / videoDetails?.videoLength) * 100}%`, transition: "all 0.3s" }}>
 										<div className="absolute -right-2 -top-[70%] rounded-full h-[20px] w-[20px] bg-white flex justify-end"></div>
 									</div>
 								</div>
@@ -75,13 +88,13 @@ const Video = ({ src, ...props }) => {
 								<div className="absolute right-2 bottom-[70px]  text-white bg-red-600 w-24 rounded-xl p-2">watermark</div>
 
 								{/* video control */}
-								<div className="absolute bottom-2 text-white flex gap-3">
+								<div className="absolute bottom-2 text-white flex items-center gap-3">
 									{/* play/pause control */}
 									<button onClick={_playPauseVideo}>{isVideoPlay ? <BsPauseCircle className="h-6 w-6" /> : <BsFillPlayFill className="h-6 w-6" />}</button>
 									
 									{/* mute/unmute control */}
-									<button onClick={_handleMuteUnmute}>{videoDetails?.isMuted ? <BsVolumeMute className="h-6 w-6" /> : <BsVolumeUp className="h-6 w-6" />}</button>
-									
+									<button onClick={_handleMuteUnmute}>{videoRef.current?.muted ? <BsVolumeMute className="h-6 w-6" /> : <BsVolumeUp className="h-6 w-6" />}</button>
+									<input value={volume} onChange={_handleVolumeControl} className="w-[20%] h-1 rounded-full" type="range" step="any" min="0" max="1" />
 									<div>
 										{formateTime(videoDetails?.currentTime) ?? "00:00"} / {formateTime(videoDetails?.videoLength) ?? "00:00"}
 									</div>
