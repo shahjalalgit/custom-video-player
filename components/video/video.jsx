@@ -4,6 +4,7 @@ import { TbPictureInPicture } from "react-icons/tb";
 const Video = ({ src, ...props }) => {
 	const videoRef = useRef();
 	const containerRef = useRef();
+	const progressRef = useRef();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isVideoPlay, setIsVideoPlay] = useState(true);
 	const [isVideoEnd, setIsVideoEnd] = useState(false);
@@ -50,7 +51,7 @@ const Video = ({ src, ...props }) => {
 		setVideoDetails({ ...videoDetails, isMuted: !videoDetails?.isMuted });
 		videoRef.current.defaultMuted = !videoDetails?.isMuted;
 		videoRef.current.muted = !videoDetails?.isMuted;
-		if (!videoDetails?.isMuted){
+		if (!videoDetails?.isMuted) {
 			setVolume(0)
 		} else {
 			setVolume(videoRef.current.volume)
@@ -59,11 +60,11 @@ const Video = ({ src, ...props }) => {
 	const _handleVolumeControl = (e) => {
 		videoRef.current.volume = e.target.value
 		setVolume(e.target.value)
-		if (e.target.value == 0){
-		  setVideoDetails({ ...videoDetails, isMuted: true });
-		}else{
-		  setVideoDetails({ ...videoDetails, isMuted: false });
-		} 
+		if (e.target.value == 0) {
+			setVideoDetails({ ...videoDetails, isMuted: true });
+		} else {
+			setVideoDetails({ ...videoDetails, isMuted: false });
+		}
 	}
 	const _handlePicInPic = () => {
 		setFullScreen(old => !old)
@@ -71,19 +72,18 @@ const Video = ({ src, ...props }) => {
 	}
 	const _handleFullScreen = () => {
 		console.log(containerRef.current);
-		if (containerRef.current.fullscreenElement){
+		if (containerRef.current.fullscreenElement) {
 			return document.exitFullscreen
 		} else {
 			containerRef.current.requestFullscreen()
 		}
 	}
 	const _handleVideoTimeline = (e) => {
-		// console.log(e.nativeEvent.offsetX)
-		let videoTimelineWidth = videoRef.current.clientWidth; // getting video timeline width
+		let videoTimelineWidth = videoRef.current.offsetWidth - 10; // getting video timeline width
 		let currentTime = ((e.nativeEvent.offsetX) / videoTimelineWidth) * videoRef.current.duration;
-		videoRef.current.currentTime = currentTime;
-		let time = Math.ceil((videoRef.current.currentTime / videoRef.current.duration) * 100);
-		console.log(time, currentTime)
+		videoRef.current.currentTime = currentTime + 0.5;
+		// console.log(videoRef.current.offsetWidth, videoRef.current.clientWidth, videoRef.current.currentTime, formateTime(currentTime))
+
 	}
 	const fastForward = () => {
 		videoRef.current.currentTime += 5;
@@ -110,11 +110,11 @@ const Video = ({ src, ...props }) => {
 								{/* progress bar */}
 								<div className="relative h-[8px] w-full bg-gray-500 rounded-2xl mb-10 cursor-pointer" onClick={_handleVideoTimeline}>
 									{/* progress bar inner */}
-									<div className={`relative h-full bg-red-600`} style={{
-										width: `${Math.ceil((videoRef.current.currentTime / videoRef.current.duration) * 100)}%`, 
-									transition: "all 0.3s"
-									 }} >
-										<div className="absolute -right-2 -top-[70%] rounded-full h-[20px] w-[20px] bg-white flex justify-end"></div>
+									<div className={`relative rounded-2xl h-full bg-red-600`} style={{
+										width: `${Math.round((videoRef.current.currentTime / videoRef.current.duration) * 100)}%`,
+										// transition: "all 0.3s"
+									}} >
+										<div className="absolute right-0 -top-[70%] rounded-full h-[20px] w-[20px] bg-white flex justify-end"></div>
 									</div>
 								</div>
 								{/* water mark */}
@@ -138,7 +138,7 @@ const Video = ({ src, ...props }) => {
 									<div className="flex items-center gap-3">
 										<button onClick={_handlePicInPic}><TbPictureInPicture className="h-6 w-6" /></button>
 										<button onClick={_handleFullScreen}><BsFullscreenExit className="h-6 w-6" /></button>
-									
+
 									</div>
 								</div>
 								{/* middle play/pause button */}
@@ -191,7 +191,7 @@ const formateTime = (time) => {
 	const seconds = Math.floor(time % 60);
 	const minutes = Math.floor(time / 60) % 60;
 	const hours = Math.floor(time / 3600);
-	if(hours == 0){
+	if (hours == 0) {
 		return `${tenPad(minutes)}:${tenPad(seconds)}`;
 	}
 	return `${tenPad(hours)}:${tenPad(minutes)}:${tenPad(seconds)}`;
