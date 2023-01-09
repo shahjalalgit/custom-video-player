@@ -38,13 +38,25 @@ export default function Home() {
                 <meta name='viewport' content='width=device-width, initial-scale=1' />
                 <link rel='icon' href='/favicon.ico' />
             </Head>
+            <div className='text-center font-bold mt-10'>
+                Mohammad Shahjalal
+                <br />
+                Software Engineer
+                <br />
+                TechnoNext Ltd. a sister concern of US Bangla Group
+                <br />
+                +8801612233903
+                <br />
+                shahjalal.csegub@gmail.com
+            </div>
             <main className={styles.main}>
-                {/* src="http://tecfa.unige.ch/guides/html/html5-video/videos/state-of-wikipedia-480x272.mp4" */}
-                {/* src: 'foo.webm', type: 'video/webm' */}
-                {/* <div > <h1 className="text-3xl font-bold bg-red-400"> Hello world! </h1> </div> <video controls autoPlay loop onClick={(e) => handleClick(e)} > <source src={videoLink} /> </video> <video src="https://res.cloudinary.com/dssvrf9oz/video/upload/v1635662987/pexels-pavel-danilyuk-5359634_1_gmixla.mp4"> </video> */}
                 <div>
-                    {/* <Video src='https://res.cloudinary.com/aremusmog/video/upload/v1668090866/WeTube/TRAILER_qurlei.mp4' /> */}
                     <Video src={'https://media.w3.org/2010/05/sintel/trailer_hd.mp4'} />
+                    <Video
+                        src={
+                            'http://tecfa.unige.ch/guides/html/html5-video/videos/state-of-wikipedia-480x272.mp4'
+                        }
+                    />
                 </div>
             </main>
         </>

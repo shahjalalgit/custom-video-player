@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { BsFillPlayFill, BsFullscreenExit, BsPauseCircle, BsPlayCircle, BsVolumeMute, BsVolumeUp } from "react-icons/bs";
 import { HiOutlineBackward, HiOutlineForward } from "react-icons/hi2";
 import { TbPictureInPicture } from "react-icons/tb";
-const Video = ({ src, ...props }) => {
+const Video = ({ src, fileType, ...props }) => {
 	const videoRef = useRef();
 	const containerRef = useRef();
 	const progressRef = useRef();
@@ -94,7 +94,7 @@ const Video = ({ src, ...props }) => {
 	// total watch time calculated
 	useEffect(() => {
 		let interval;
-		if (isVideoPlay) {
+		if (isVideoPlay && isLoading === false) {
 			interval = setInterval(() => {
 				setTotalTime((prevTime) => prevTime + 1);
 			}, 1000);
@@ -102,12 +102,12 @@ const Video = ({ src, ...props }) => {
 			clearInterval(interval);
 		}
 		return () => clearInterval(interval);
-	}, [isVideoPlay]);
+	}, [isLoading, isVideoPlay]);
 	return (
 		<>
 			<div className="relative group w-[100%]" ref={containerRef}>
 				<video autoPlay={true} muted={videoDetails?.isMuted} ref={videoRef} {...props} className="w-full max-w-[1200px] mx-auto my-8" onPlay={_handlePlayVideo} onWaiting={() => setIsLoading(true)} onPlaying={() => setIsLoading(false)} onTimeUpdate={_onTimeUpdate} onEnded={_handleEnded}>
-					<source src={src} type='video/mp4'></source>
+					<source src={src} type={fileType ?? 'video/mp4'}></source>
 				</video>
 				{/* video overlay */}
 				<div className="absolute left-0 right-0 top-0 w-full h-full px-[10px] flex flex-col justify-end">
