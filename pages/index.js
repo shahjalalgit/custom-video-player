@@ -39,6 +39,7 @@ export default function Home() {
                 <link rel='icon' href='/favicon.ico' />
             </Head>
             <main className={styles.main}>
+                {/* src="http://tecfa.unige.ch/guides/html/html5-video/videos/state-of-wikipedia-480x272.mp4" */}
                 {/* src: 'foo.webm', type: 'video/webm' */}
                 {/* <div > <h1 className="text-3xl font-bold bg-red-400"> Hello world! </h1> </div> <video controls autoPlay loop onClick={(e) => handleClick(e)} > <source src={videoLink} /> </video> <video src="https://res.cloudinary.com/dssvrf9oz/video/upload/v1635662987/pexels-pavel-danilyuk-5359634_1_gmixla.mp4"> </video> */}
                 <div>
