@@ -73,17 +73,15 @@ const Video = ({ src, ...props }) => {
 		videoRef.current.requestPictureInPicture();
 	}
 	const _handleFullScreen = () => {
-		console.log(containerRef.current);
-		if (containerRef.current.fullscreenElement) {
-			return document.exitFullscreen
-		} else {
-			containerRef.current.requestFullscreen()
+		if (videoRef.current.requestFullscreen) {
+			videoRef.current.requestFullscreen();
+		} else if (videoRef.current.webkitRequestFullscreen) { /* Safari */
+			videoRef.current.webkitRequestFullscreen();
+		} else if (videoRef.current.msRequestFullscreen) { /* IE11 */
+			elem.msRequestFullscreen();
 		}
 	}
 	const _handleVideoTimeline = (e) => {
-		// console.log(e, videoRef.current.currentTime)
-		// let videoTimelineWidth = videoRef.current.clientWidth; // getting video timeline width
-		// let currentTime = ((e.nativeEvent.offsetX) / videoTimelineWidth) * videoRef.current.duration;
 		videoRef.current.currentTime = e.target.value;
 	}
 	const fastForward = () => {
