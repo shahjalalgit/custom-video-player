@@ -120,7 +120,7 @@ const Video = ({ src, fileType, ...props }) => {
 								{/* progress bar */}
 								<div className="relative h-[8px] w-full bg-gray-500 rounded-2xl mb-10 cursor-pointer">
 									{/* progress bar inner */}
-									<input className={`absolute  w-full rounded-2xl h-full cursor-pointer`} value={videoRef.current.currentTime} style={{ backgroundSize: `${(videoRef.current.currentTime * 100) / videoRef.current.duration}% 100%` }} onMouseDown={() => videoRef.current.pause()} onMouseUp={() => videoRef.current.play()} onChange={_handleVideoTimeline} type="range" step="any" min="0" max={videoRef.current.duration} />
+									<input className={`absolute  w-full rounded-2xl h-full cursor-pointer`} value={videoRef.current.currentTime} style={{ backgroundSize: `${(videoRef.current.currentTime * 100) / videoRef.current.duration}% 100%` }} onMouseDown={() => videoRef.current.pause()} onMouseUp={() => isVideoPlay && videoRef.current.play()} onChange={_handleVideoTimeline} type="range" step="any" min="0" max={videoRef.current.duration} />
 								</div>
 
 								{/* water mark */}
